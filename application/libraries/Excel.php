@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Services;
-
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class ExcelExportService
+class Excel
 {
-    public function export($data, $title, $headers)
+    public function export($data, $title, $headers, $filename)
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -33,6 +31,8 @@ class ExcelExportService
         $numrow = 4;
         foreach ($data as $index => $item) {
             $sheet->setCellValue('A' . $numrow, $index + 1);
+            $sheet->getStyle('A' . $numrow)->applyFromArray($style_row);
+            
             $col = 'B'; 
             foreach ($item as $value) {
                 $sheet->setCellValue($col . $numrow, $value);
@@ -57,7 +57,7 @@ class ExcelExportService
 
         // Output
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="' . $title . '.xlsx"');
+        header('Content-Disposition: attachment; filename="' . $filename . '.xlsx"');
         header('Cache-Control: max-age=0');
 
         $writer = new Xlsx($spreadsheet);

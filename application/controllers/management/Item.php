@@ -1,11 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-use Dompdf\Dompdf;
-use Dompdf\Options;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
 class Item extends CI_Controller 
 {
     public function __construct()
@@ -14,6 +9,8 @@ class Item extends CI_Controller
         is_logged();
         $this->load->model('item_model');
         $this->load->library('form_validation');
+        $this->load->library('excel');
+        $this->load->library('pdf');
     }
 
     public function index()
@@ -37,115 +34,32 @@ class Item extends CI_Controller
         
         // Load tampilan sebagai HTML
         $html = $this->load->view('management/item/pdf', $data, TRUE);
+        $filename = 'items.pdf';
 
-        // Konfigurasi Dompdf
-        $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isRemoteEnabled', true);
-
-        $dompdf = new Dompdf($options);
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-
-        // Output file PDF
-        $dompdf->stream("test.pdf", array("Attachment" => TRUE));
+        $this->pdf->export($html, $filename);
     }
 
     public function excel()
     {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $style_col = [
-          'font' => ['bold' => true], 
-          'alignment' => [
-            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 
-            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER 
-          ],
-          'borders' => [
-            'top' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
-            'right' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],  
-            'bottom' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
-            'left' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN] 
-          ]
-        ];
-
-        $style_row = [
-          'alignment' => [
-            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT, 
-            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER 
-          ],
-          'borders' => [
-            'top' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN], // Set border top dengan garis tipis
-            'right' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],  // Set border right dengan garis tipis
-            'bottom' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN], // Set border bottom dengan garis tipis
-            'left' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN] // Set border left dengan garis tipis
-          ]
-        ];
-
-        $sheet->setCellValue('A1', "DATA ITEM");
-        $sheet->mergeCells('A1:G1');
-        $sheet->getStyle('A1')->getFont()->setBold(true); 
-
-        $sheet->setCellValue('A3', "NO");
-        $sheet->setCellValue('B3', "NAME"); 
-        $sheet->setCellValue('C3', "CATEGORY"); 
-        $sheet->setCellValue('D3', "STOCK");
-        $sheet->setCellValue('E3', "PURCHASE (Rp)");
-        $sheet->setCellValue('F3', "SELLING (Rp)");
-        $sheet->setCellValue('G3', "DATE");
-
-        $sheet->getStyle('A3')->applyFromArray($style_col);
-        $sheet->getStyle('B3')->applyFromArray($style_col);
-        $sheet->getStyle('C3')->applyFromArray($style_col);
-        $sheet->getStyle('D3')->applyFromArray($style_col);
-        $sheet->getStyle('E3')->applyFromArray($style_col);
-        $sheet->getStyle('F3')->applyFromArray($style_col);
-        $sheet->getStyle('G3')->applyFromArray($style_col);
-
         $items = $this->item_model->get_all_items();
-        $no = 1; 
-        $numrow = 4;
-        foreach($items as $item){
-          $sheet->setCellValue('A'.$numrow, $no);
-          $sheet->setCellValue('B'.$numrow, $item->name);
-          $sheet->setCellValue('C'.$numrow, $item->category);
-          $sheet->setCellValue('D'.$numrow, $item->stock);
-          $sheet->setCellValue('E'.$numrow, $item->purchase_price);
-          $sheet->setCellValue('F'.$numrow, $item->selling_price);
-          $sheet->setCellValue('G'.$numrow, $item->date_in);
-          
-          $sheet->getStyle('A'.$numrow)->applyFromArray($style_row);
-          $sheet->getStyle('B'.$numrow)->applyFromArray($style_row);
-          $sheet->getStyle('C'.$numrow)->applyFromArray($style_row);
-          $sheet->getStyle('D'.$numrow)->applyFromArray($style_row);
-          $sheet->getStyle('E'.$numrow)->applyFromArray($style_row);
-          $sheet->getStyle('F'.$numrow)->applyFromArray($style_row);
-          $sheet->getStyle('G'.$numrow)->applyFromArray($style_row);
-          
-          $no++; 
-          $numrow++;
+
+        $data = [];
+        foreach($items as $item) {
+            $data[] = [
+                $item->name,
+                $item->category,
+                $item->stock,
+                $item->purchase_price,
+                $item->selling_price,
+                $item->date_in,
+            ];
         }
 
-        $sheet->getColumnDimension('A')->setWidth(5); 
-        $sheet->getColumnDimension('B')->setWidth(25); 
-        $sheet->getColumnDimension('C')->setWidth(20); 
-        $sheet->getColumnDimension('D')->setWidth(10); 
-        $sheet->getColumnDimension('E')->setWidth(15); 
-        $sheet->getColumnDimension('F')->setWidth(15); 
-        $sheet->getColumnDimension('G')->setWidth(10); 
+        $headers = ["NO", "NAME", "CATEGORY", "STOCK", "PURCHASE (Rp)", "SELLING (Rp)", "DATE"];
+        $title = "DATA ITEM";
+        $filename = "items";
 
-        $sheet->getDefaultRowDimension()->setRowHeight(-1);
-        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
-        $sheet->setTitle("Data Item");
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="Items.xlsx"'); // Set nama file excel nya
-        header('Cache-Control: max-age=0');
-
-        $writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
+        $this->excel->export($data, $title, $headers, $filename);
     }
 
     // AJAX
