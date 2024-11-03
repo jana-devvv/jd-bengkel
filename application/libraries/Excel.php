@@ -43,13 +43,17 @@ class Excel
         }
 
         // Set column widths
-        $sheet->getColumnDimension('A')->setWidth(5);
-        $sheet->getColumnDimension('B')->setWidth(25);
-        $sheet->getColumnDimension('C')->setWidth(20);
-        $sheet->getColumnDimension('D')->setWidth(10);
-        $sheet->getColumnDimension('E')->setWidth(15);
-        $sheet->getColumnDimension('F')->setWidth(15);
-        $sheet->getColumnDimension('G')->setWidth(10);
+        // $sheet->getColumnDimension('A')->setWidth(5);
+        // $sheet->getColumnDimension('B')->setWidth(25);
+        // $sheet->getColumnDimension('C')->setWidth(20);
+        // $sheet->getColumnDimension('D')->setWidth(10);
+        // $sheet->getColumnDimension('E')->setWidth(15);
+        // $sheet->getColumnDimension('F')->setWidth(15);
+        // $sheet->getColumnDimension('G')->setWidth(10);
+
+        foreach (range('A', 'G') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
 
         // Page settings
         $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);

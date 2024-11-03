@@ -72,29 +72,25 @@
             <p>Telepon: (021) 123-4567 | Email: info@jdbengkel.com</p>
         </div>
 
-        <h2>Data Item | POS Bengkel</h2>
+        <h2>Data Customer | POS Bengkel</h2>
         <table>
             <thead>
                 <tr>
                     <th>No.</th>
                     <th>Name</th>
-                    <th>Category</th>
-                    <th>Stock</th>
-                    <th>Purchase (Rp)</th>
-                    <th>Selling (Rp)</th>
+                    <th>Phone Number</th>
+                    <th>Address</th>
                     <th>Date</th>
                 </tr>
             </thead>
             <tbody>
-                <?php $no = 1; foreach($items as $item): ?>
+                <?php $no = 1; foreach($customers as $customer): ?>
                     <tr>
                         <td><?= $no++ ?></td>
-                        <td><?= $item->name ?></td>
-                        <td><?= $item->category ?></td>
-                        <td><?= $item->stock ?></td>
-                        <td><?= number_format($item->purchase_price, 0, ',','.') ?></td>
-                        <td><?= number_format($item->selling_price, 0, ',','.') ?></td>
-                        <td><?= $item->date_in ?></td>
+                        <td><?= $customer->name ?></td>
+                        <td><?= $customer->phone_number ?></td>
+                        <td><?= $customer->address ?></td>
+                        <td><?= $customer->created_at ?></td>
                     </tr>
                 <?php endforeach ?>
             </tbody>

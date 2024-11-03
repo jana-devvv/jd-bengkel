@@ -9,6 +9,8 @@ class Service extends CI_Controller
         is_logged();
         $this->load->model('service_model');
         $this->load->library('form_validation');
+        $this->load->library('excel');
+        $this->load->library('pdf');
     }
     
     public function index()
@@ -20,6 +22,41 @@ class Service extends CI_Controller
         $this->load->view('management/service/index', $data);
         $this->load->view('_layouts/main/main_end');
     }    
+
+    public function pdf()
+    {
+        $services = $this->service_model->get_all_services();
+
+        $data = [
+            'title' => 'PDF | JD Bengkel',
+            'services' => $services,
+        ];
+        
+        // Load tampilan sebagai HTML
+        $html = $this->load->view('management/service/pdf', $data, TRUE);
+        $filename = 'services.pdf';
+
+        $this->pdf->export($html, $filename);
+    }
+
+    public function excel()
+    {
+        $services = $this->service_model->get_all_services();
+
+        $data = [];
+        foreach($services as $service) {
+            $data[] = [
+                $service->name,
+                $service->price,
+            ];
+        }
+
+        $headers = ["NO", "NAME", "PRICE"];
+        $title = "DATA SERVICES";
+        $filename = "services";
+
+        $this->excel->export($data, $title, $headers, $filename);
+    }
 
     // AJAX
     public function fetch_all()

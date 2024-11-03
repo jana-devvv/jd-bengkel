@@ -24,6 +24,8 @@
         <div class="card ">
           <div class="card-header">
             <button type="button" class="btn btn-success btn-add"><span class="btn-label"><i class="fa fa-plus"></i></span>Add Customer</button>
+            <button type="button" class="btn btn-danger btn-pdf float-end"><span class="btn-label"><i class="fa fa-file-pdf"></i></span> Export PDF</button>
+            <button type="button" class="btn btn-secondary btn-excel float-end me-2"><span class="btn-label"><i class="fa fa-file-excel"></i></span> Export Excel</button>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -118,6 +120,14 @@
           }
         },
       ]
+    })
+
+    $('.btn-pdf').click(function() {
+      window.open('<?php echo site_url('management/customer/pdf') ?>', '_blank')
+    })
+    
+    $('.btn-excel').click(function() {
+      window.open('<?php echo site_url('management/customer/excel') ?>', '_blank')
     })
 
     $('.btn-add').click(function() {

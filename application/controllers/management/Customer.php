@@ -9,6 +9,8 @@ class Customer extends CI_Controller
         is_logged();
         $this->load->model('customer_model');
         $this->load->library('form_validation');
+        $this->load->library('excel');
+        $this->load->library('pdf');
     }
     
     public function index()
@@ -20,6 +22,43 @@ class Customer extends CI_Controller
         $this->load->view('management/customer/index', $data);
         $this->load->view('_layouts/main/main_end');
     }    
+
+    public function pdf()
+    {
+        $customers = $this->customer_model->get_all_customers();
+
+        $data = [
+            'title' => 'PDF | JD Bengkel',
+            'customers' => $customers,
+        ];
+        
+        // Load tampilan sebagai HTML
+        $html = $this->load->view('management/customer/pdf', $data, TRUE);
+        $filename = 'customers.pdf';
+
+        $this->pdf->export($html, $filename);
+    }
+
+    public function excel()
+    {
+        $customers = $this->customer_model->get_all_customers();
+
+        $data = [];
+        foreach($customers as $customer) {
+            $data[] = [
+                $customer->name,
+                $customer->phone_number,
+                $customer->address,
+                $customer->created_at,
+            ];
+        }
+
+        $headers = ["NO", "NAME", "PHONE NUMBER", "ADDRESS", "DATE"];
+        $title = "DATA CUSTOMER";
+        $filename = "customers";
+
+        $this->excel->export($data, $title, $headers, $filename);
+    }
 
     // AJAX
     public function fetch_all()
