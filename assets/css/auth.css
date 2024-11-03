@@ -1,0 +1,27 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+}
+.form-signin {
+    width: 100%;
+    max-width: 360px;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.form-signin h1 {
+    font-size: 1.8rem;
+}
+.form-signin p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+.btn-submit {
+    width: 100%;
+    background-color: #007bff;
+    border: none;
+}
