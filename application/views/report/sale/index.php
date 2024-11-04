@@ -22,23 +22,26 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <form action="" id="formDate" class="d-md-flex d-block">
-                    <div class="form-group mx-2">
-                        <label for="start_date">Start Date</label>
-                        <input type="datetime-local" id="start_date" name="start_date" class="form-control"/>
-                    </div>
-                    <div class="form-group mx-2">
-                        <label for="end_date">End Date</label>
-                        <input type="datetime-local" id="end_date" name="end_date" class="form-control"/>
-                    </div>
-                    <div class="form-group mx-2 d-flex align-items-end">
-                        <button type="button" class="btn btn-primary btn-filter">Filter</button>
-                        <button type="button" class="btn btn-danger btn-pdf mx-2"><span class="btn-label"><i class="fa fa-file-pdf"></i></span> Export PDF</button>
-                        <button type="button" class="btn btn-secondary btn-excel"><span class="btn-label"><i class="fa fa-file-excel"></i></span> Export Excel</button>
-                    </div>
-                </form>
+          <div class="card-header d-md-flex justify-content-between align-items-center">
+            <form action="" id="formDate" class="d-flex justify-content-center">
+              <div class="form-group mx-2">
+                <input type="date" id="date" name="date" class="form-control" />
+              </div>
+              <div class="form-group mx-2 d-flex align-items-end">
+                <button type="button" class="btn btn-primary btn-filter">Filter</button>
+              </div>
+            </form>
+            
+            <div class="d-flex justify-content-center">
+              <button type="button" class="btn btn-secondary btn-excel me-2">
+                <span class="btn-label"><i class="fa fa-file-excel"></i></span> Export Excel
+              </button>
+              <button type="button" class="btn btn-danger btn-pdf">
+                <span class="btn-label"><i class="fa fa-file-pdf"></i></span> Export PDF
+              </button>
             </div>
+          </div>
+
           <div class="card-body">
             <div class="table-responsive">
               <table
@@ -47,18 +50,18 @@
               >
                 <thead>
                   <tr>
-                    <th width="20%">ID Sales</th>
-                    <th width="30%">Sale Date</th>
-                    <th width="25%">Customer</th>
-                    <th width="25%">Sale Total</th>
+                    <th width="10%">ID</th>
+                    <th width="35%">Sales</th>
+                    <th width="35%">Expenditure</th>
+                    <th width="20%">Date</th>
                   </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                      <th width="20%">ID Sales</th>
-                      <th width="30%">Sale Date</th>
-                      <th width="25%">Customer</th>
-                      <th width="25%">Sale Total</th>
+                      <th width="10%">ID</th>
+                      <th width="35%">Sales</th>
+                      <th width="35%">Expenditure</th>
+                      <th width="20%">Date</th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -115,54 +118,71 @@
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0')
     const day = String(now.getDate()).padStart(2, '0')
-    now.setDate(now.getDate() - 1)
-    const yesterday = String(now.getDate()).padStart(2, '0')
 
-    const start_date = `${year}-${month}-${yesterday}T00:00`
-    const end_date = `${year}-${month}-${day}T00:00`
+    const date = `${year}-${month}-${day}`
+    let dateFilter = date;
 
     table = $('#datatable').DataTable({
       "ajax": {
         "url": "<?php echo site_url('report/sale/fetch_data') ?>",
         "type": "POST",
-        "data": {start_date, end_date},
+        "data": {date},
         "dataType": "JSON",
       },
       "columns": [
         {"data": "id"},
-        {"data": "sale_date"},
-        {"data": "customer_name"},
-        {"data": "sale_total"},
+        {
+          "data": "total_sales",
+          "render": function(data,type,row) {
+            return rupiah(data)
+          }
+        },
+        {
+          "data": "total_expenditure",
+          "render": function(data,type,row) {
+            return rupiah(data)
+          }
+        },
+        {"data": "report_date"},
       ]
     })
 
     $('.btn-filter').click(function() {
-        const startDate = $('#start_date').val() ? $('#start_date').val() : start_date 
-        const endDate = $('#end_date').val() ? $('#end_date').val() : end_date
+        dateFilter = $('#date').val() ? $('#date').val() : date
 
         $('#datatable').DataTable().clear().destroy()
         $('#datatable').DataTable({
             "ajax": {
                 "url": "<?php echo site_url('report/sale/fetch_data') ?>",
                 "type": "POST",
-                "data": {start_date: startDate, end_date: endDate},
+                "data": {date: dateFilter},
                 "dataType": "JSON",
             },
             "columns": [
-                {"data": "id"},
-                {"data": "sale_date"},
-                {"data": "customer_name"},
-                {"data": "sale_total"},
+              {"data": "id"},
+              {
+                "data": "total_sales",
+                "render": function(data,type,row) {
+                  return rupiah(data)
+                }
+              },
+              {
+                "data": "total_expenditure",
+                "render": function(data,type,row) {
+                  return rupiah(data)
+                }
+              },
+              {"data": "report_date"},
             ]
         })
     })
 
     $('.btn-pdf').click(function() {
-      window.open('<?php echo site_url('report/sale/pdf/') ?>' + start_date + '/' + end_date, '_blank')
+      window.open('<?php echo site_url('report/sale/pdf/') ?>' + dateFilter, '_blank')
     })
     
     $('.btn-excel').click(function() {
-      window.open('<?php echo site_url('report/sale/excel/') ?>' + start_date + '/' + end_date, '_blank')
+      window.open('<?php echo site_url('report/sale/excel/') ?>' + dateFilter, '_blank')
     })
   })
 </script>

@@ -65,14 +65,6 @@
           <div class="card-header">
             <div class="card-head-row">
               <div class="card-title">Total Sales</div>
-              <div class="card-tools">
-                <a href="#" class="btn btn-label-success btn-round btn-sm me-2" >
-                  <span class="btn-label"><i class="fa fa-pencil"></i></span>Export
-                </a>
-                <a href="#" class="btn btn-label-info btn-round btn-sm">
-                  <span class="btn-label"><i class="fa fa-print"></i></span>Print
-                </a>
-              </div>
             </div>
           </div>
           <div class="card-body">
@@ -100,30 +92,6 @@
           <div class="card-header">
             <div class="card-head-row">
               <div class="card-title">Popular Sales</div>
-              <div class="card-tools">
-                <div class="dropdown">
-                  <button
-                    class="btn btn-sm btn-label-primary dropdown-toggle"
-                    type="button"
-                    id="dropdownMenuButton"
-                    data-bs-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    Export
-                  </button>
-                  <div
-                    class="dropdown-menu"
-                    aria-labelledby="dropdownMenuButton"
-                  >
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#"
-                      >Something else here</a
-                    >
-                  </div>
-                </div>
-              </div>
             </div>
             <div class="card-category">Item/Service</div>
           </div>
@@ -157,7 +125,7 @@
       header: { 
         left: 'prev,next',
         center: 'title',
-        right: 'month,agendaWeek,agendaDay',
+        right: '',
       }
     })
 

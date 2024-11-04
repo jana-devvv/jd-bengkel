@@ -7,120 +7,91 @@
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            padding: 20px;
         }
         .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
+            text-align: center;
             margin-bottom: 20px;
         }
         .header img {
-            height: 60px;
+            width: 80px;
+            height: auto;
         }
-        .header-info {
-            text-align: left;
+        .header h1 {
+            margin: 10px 0 5px;
+            font-size: 22px;
+            color: #333;
         }
-        .header-info h1 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-        .header-info p {
+        .header p {
             margin: 2px 0;
-            font-size: 0.9em;
+            font-size: 14px;
+            color: #666;
         }
-        .transaction-info, .footer {
-            margin-top: 20px;
-        }
-        .transaction-info p {
-            margin: 2px 0;
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 18px;
+            color: #333;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 10px;
         }
         table, th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #000;
         }
         th, td {
-            padding: 10px;
+            padding: 8px;
             text-align: left;
-            font-size: 0.9em;
+            font-size: 12px;
         }
-        .table-header {
+        th {
             background-color: #f2f2f2;
+            font-weight: bold;
         }
-        .total-section {
+        .footer {
             text-align: right;
             margin-top: 20px;
-        }
-        .total-section p {
-            margin: 5px 0;
-            font-size: 1.1em;
-        }
-        .signature, .thank-you {
-            margin-top: 30px;
-            text-align: right;
+            font-size: 12px;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    
-    <div class="header">
-        <img src="<?= base_url('assets/img/logo.png') ?>" alt="Logo">
-        <div class="header-info">
+
+    <div class="container">
+        <div class="header">
+            <img src="<?= base_url('assets/img/logo.png') ?>" alt="Logo">
             <h1>JD Bengkel</h1>
-            <p>Address: Jln. Suka Coding RT 001 RW 010, Kecamatan Javascript, Kabupaten PHP, Indonesia</p>
-            <p>Telephone: (021) 123-4567</p>
-            <p>Email: info@jdbengkel.com</p>
-            <p>Printed at: <?= date('d-m-Y') ?></p>
+            <p>Jln. Suka Coding RT 001 RW 010, Kecamatan Javascript, Kabupaten PHP, Indonesia</p>
+            <p>Telephone: (021) 123-4567 | Email: info@jdbengkel.com</p>
         </div>
-    </div>
 
-    <div class="transaction-info">
-        <p><strong>Name Customer:</strong> <?= $sales->customer_name ?></p>
-        <p><strong>Date Transaction:</strong> <?= $sales->sale_date ?></p>
-    </div>
-
-    <table>
-        <thead>
-            <tr class="table-header">
-                <th>No.</th>
-                <th>Type</th>
-                <th>Name</th>
-                <th>Price (Rp)</th>
-                <th>Quantity</th>
-                <th>Subtotal (Rp)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php $no = 1; foreach($sales_detail as $data): ?>
+        <h2>Data Service | POS Bengkel</h2>
+        <table>
+            <thead>
                 <tr>
-                    <td><?= $no++ ?></td>
-                    <td><?= $data->id_service ? "Service" : "Item" ?></td>
-                    <td><?= $data->id_service ? $data->service_name : $data->item_name ?></td>
-                    <td><?= $data->id_service ? number_format($data->service_price, 0, ',','.') : number_format($data->item_price, 0, ',','.') ?></td>
-                    <td><?= $data->amount ?></td>
-                    <td><?= number_format($data->subtotal, 0, ',','.') ?></td>
+                    <th>Total Sales (Rp)</th>
+                    <th>Total Expenditure (Rp)</th>
                 </tr>
-            <?php endforeach ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><?= number_format($report->total_sales, 0, ',','.') ?></td>
+                    <td><?= number_format($report->total_expenditure, 0, ',','.') ?></td>
+                </tr>
+            </tbody>
+        </table>
 
-    <div class="total-section">
-        <p><strong>Total:</strong> Rp. <?= number_format($sales->sale_total, 0, ',','.') ?></p>
-    </div>
-
-    <div class="thank-you">
-        <p>Thank you for trusting our services. We look forward to serving you again!</p>
-    </div>
-
-    <div class="signature">
-        <p>________________________</p>
-        <p><strong>JD Bengkel</strong></p>
+        <div class="footer">
+            <p>Printed at : <?= date('d-m-Y') ?></p>
+            <p>&copy; <?= date('Y'); ?> Bengkel. This report is generated automatically.</p>
+        </div>
     </div>
     
 </body>

@@ -8,6 +8,8 @@ class ReportSale extends CI_Controller
         parent::__construct();
         is_logged();
         $this->load->model('report_model');
+        $this->load->library('excel');
+        $this->load->library('pdf');
     }
 
     public function index()
@@ -22,50 +24,43 @@ class ReportSale extends CI_Controller
 
     public function fetch_data()
     {
-        $start_date = date('Y-m-d H:i:s', strtotime($this->input->post('start_date')));
-        $end_date = date('Y-m-d H:i:s', strtotime($this->input->post('end_date')));
+        $date = $this->input->post('date');
+        $data = $this->report_model->get_report_by_date($date);
 
-        $data = $this->report_model->get_sales_report_by_date($start_date, $end_date);
-
-        $result = array('data' => $data);
+        $result = ['data' => $data];
         echo json_encode($result);
     }
 
-    public function pdf($start_date, $end_date)
+    public function pdf($date)
     {
-        $report = $this->report_model->get_sales_report_by_date($start_date, $end_date);
+        $report = $this->report_model->get_report_where(['report_date' => $date]);
 
         $data = [
             'title' => 'PDF | JD Bengkel',
+            'date' => $date,
             'report' => $report,
         ];
         
-        // Load tampilan sebagai HTML
         $html = $this->load->view('report/sale/pdf', $data, TRUE);
         $filename = 'report.pdf';
 
         $this->pdf->export($html, $filename);
     }
 
-    public function excel()
+    public function excel($date)
     {
-        $items = $this->item_model->get_all_items();
+        $report = $this->report_model->get_report_where(['report_date' => $date]);
 
         $data = [];
-        foreach($items as $item) {
-            $data[] = [
-                $item->name,
-                $item->category,
-                $item->stock,
-                $item->purchase_price,
-                $item->selling_price,
-                $item->date_in,
-            ];
-        }
+        $data[] = [
+            $report->total_sales,
+            $report->total_expenditure,
+            $report->report_date,
+        ];
 
-        $headers = ["NO", "NAME", "CATEGORY", "STOCK", "PURCHASE (Rp)", "SELLING (Rp)", "DATE"];
-        $title = "DATA ITEM";
-        $filename = "items";
+        $headers = ["NO", "TOTAL SALES", "TOTAL EXPENDITURE", "DATE"];
+        $title = "DATA REPORT";
+        $filename = "report";
 
         $this->excel->export($data, $title, $headers, $filename);
     }

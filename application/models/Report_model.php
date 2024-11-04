@@ -5,15 +5,41 @@ class Report_model extends CI_Model
 {
     protected $table = 'report';
 
-    public function get_sales_report_by_date($start_date = NULL, $end_date = NULL)
-    {   
-        $this->db->select('sales.*, customers.name as customer_name');
-        $this->db->from('sales');
-        $this->db->join('customers', 'sales.id_customer = customers.id');
-        $this->db->where('sales.sale_date >=', $start_date);
-        $this->db->where('sales.sale_date <=', $end_date);
+    public function daily_report($date)
+    {
+        $this->db->select_sum('sale_total');
+        $this->db->where('sale_date', $date);
 
-        $query = $this->db->get();
-        return $query->result();
+        $total_sales = $this->db->get('sales')->row()->sale_total;
+
+        $expenditure = $this->db->select('items.purchase_price, sales_detail.amount')
+        ->from('sales_detail')
+        ->join('items', 'items.id = sales_detail.id_item')
+        ->join('sales', 'sales.id = sales_detail.id_sale')
+        ->where('sales.sale_date', $date)
+        ->get();
+
+        $total_expenditure = 0;
+        foreach($expenditure->result() as $row) {
+            $total_expenditure += $row->amount * $row->purchase_price;
+        }
+
+        $data = [
+            'report_date' => $date,
+            'total_sales' => $total_sales,
+            'total_expenditure' => $total_expenditure
+        ];
+
+        $this->db->insert($this->table, $data);
+    }
+
+    public function get_report_by_date($date)
+    {
+        return $this->db->get_where($this->table, ['report_date' => $date])->result();
+    }
+
+    public function get_report_where($conditions = [])
+    {   
+        return $this->db->get_where($this->table, $conditions)->row();
     }
 }

@@ -77,5 +77,5 @@ $route['transaction/sale/destroy/(:num)'] = 'transaction/TransactionSale/destroy
 // Report
 $route['report/sale'] = 'report/ReportSale/index';
 $route['report/sale/(:any)'] = 'report/ReportSale/$1';
-$route['report/sale/pdf/(:date)/(:date)'] = 'report/ReportSale/pdf/$1/$2';
-$route['report/sale/excel/(:date)/(:date)'] = 'report/ReportSale/excel/$1/$2';
+$route['report/sale/pdf/(:any)'] = 'report/ReportSale/pdf/$1';
+$route['report/sale/excel/(:any)'] = 'report/ReportSale/excel/$1';

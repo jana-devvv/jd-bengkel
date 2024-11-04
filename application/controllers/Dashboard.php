@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use Dompdf\Dompdf;
+
 class Dashboard extends CI_Controller
 {
     public function __construct()
@@ -11,6 +13,7 @@ class Dashboard extends CI_Controller
         $this->load->model('item_model');
         $this->load->model('customer_model');
         $this->load->model('user_model');
+        $this->load->library('pdf');
     }
 
     public function index()
