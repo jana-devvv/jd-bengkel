@@ -2,6 +2,9 @@
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
 class Excel
 {
@@ -15,9 +18,11 @@ class Excel
         $style_row = $this->getRowStyle();
 
         // Set title
+        $lastColumn = chr(ord('A') + count($headers) - 1);
         $sheet->setCellValue('A1', $title);
-        $sheet->mergeCells('A1:' . 'G1');
+        $sheet->mergeCells("A1:{$lastColumn}1"); 
         $sheet->getStyle('A1')->getFont()->setBold(true);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Set headers
         $col = 'A';
@@ -42,21 +47,13 @@ class Excel
             $numrow++;
         }
 
-        // Set column widths
-        // $sheet->getColumnDimension('A')->setWidth(5);
-        // $sheet->getColumnDimension('B')->setWidth(25);
-        // $sheet->getColumnDimension('C')->setWidth(20);
-        // $sheet->getColumnDimension('D')->setWidth(10);
-        // $sheet->getColumnDimension('E')->setWidth(15);
-        // $sheet->getColumnDimension('F')->setWidth(15);
-        // $sheet->getColumnDimension('G')->setWidth(10);
-
-        foreach (range('A', 'G') as $columnID) {
+        // Set column widths dynamically
+        foreach (range('A', $lastColumn) as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
         // Page settings
-        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
         $sheet->setTitle($title);
 
         // Output
@@ -68,13 +65,14 @@ class Excel
         $writer->save('php://output');
     }
 
+
     private function getColumnStyle()
     {
         return [
             'font' => ['bold' => true],
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
             ],
             'borders' => $this->getBorders()
         ];
@@ -84,8 +82,8 @@ class Excel
     {
         return [
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+                'horizontal' => Alignment::HORIZONTAL_LEFT,
+                'vertical' => Alignment::VERTICAL_CENTER
             ],
             'borders' => $this->getBorders()
         ];
@@ -94,10 +92,10 @@ class Excel
     private function getBorders()
     {
         return [
-            'top' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
-            'right' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
-            'bottom' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
-            'left' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
+            'top' => ['borderStyle' => Border::BORDER_THIN],
+            'right' => ['borderStyle' => Border::BORDER_THIN],
+            'bottom' => ['borderStyle' => Border::BORDER_THIN],
+            'left' => ['borderStyle' => Border::BORDER_THIN]
         ];
     }
 }
