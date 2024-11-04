@@ -226,14 +226,13 @@
       type: "GET",
       dataType: "JSON",
       success: function(response) {
-        if(response.data.length === 0) {
+        if(response.data.length > 0) {
+          $('#popular_sales').empty();
           $.each(response.data, function(index, popular) {
             let value = popular.item_name ? popular.item_name : popular.service_name
             let type = popular.item_name ? "Item" : "Service"
-            $('#popular_sales').append(`<li class="list-group-item">${index + 1}. ${value} | <span class="text-info">${type}</span> <span class="badge badge-success">Total : ${popular.total_sales}</span></li>`)
+            $('#popular_sales').append(`<li class="list-group-item">${index + 1}. ${value} | <span class="text-info ms-1">${type}</span> <span class="badge badge-success">Total : ${popular.total_sales}</span></li>`)
           })
-        } else {
-          $('#popular_sales').empty();
         }
       }
     })

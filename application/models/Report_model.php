@@ -3,6 +3,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Report_model extends CI_Model 
 {
+    protected $table = 'report';
+
     public function get_sales_report_by_date($start_date = NULL, $end_date = NULL)
     {   
         $this->db->select('sales.*, customers.name as customer_name');

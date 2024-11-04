@@ -69,9 +69,13 @@ $route['management/user'] = 'management/User/index';
 // Transaction
 $route['transaction/sale'] = 'transaction/TransactionSale/index';
 $route['transaction/sale/(:any)'] = 'transaction/TransactionSale/$1';
+$route['transaction/sale/pdf/(:num)'] = 'transaction/TransactionSale/pdf/$1';
+$route['transaction/sale/excel/(:num)'] = 'transaction/TransactionSale/excel/$1';
 $route['transaction/sale/edit/(:num)'] = 'transaction/TransactionSale/edit/$1';
 $route['transaction/sale/destroy/(:num)'] = 'transaction/TransactionSale/destroy/$1';
 
 // Report
 $route['report/sale'] = 'report/ReportSale/index';
 $route['report/sale/(:any)'] = 'report/ReportSale/$1';
+$route['report/sale/pdf/(:date)/(:date)'] = 'report/ReportSale/pdf/$1/$2';
+$route['report/sale/excel/(:date)/(:date)'] = 'report/ReportSale/excel/$1/$2';

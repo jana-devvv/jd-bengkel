@@ -69,7 +69,7 @@
             <img src="<?= base_url('assets/img/logo.png') ?>" alt="Logo">
             <h1>JD Bengkel</h1>
             <p>Jln. Suka Coding RT 001 RW 010, Kecamatan Javascript, Kabupaten PHP, Indonesia</p>
-            <p>Telepon: (021) 123-4567 | Email: info@jdbengkel.com</p>
+            <p>Telephone: (021) 123-4567 | Email: info@jdbengkel.com</p>
         </div>
 
         <h2>Data Service | POS Bengkel</h2>
@@ -78,7 +78,7 @@
                 <tr>
                     <th>No.</th>
                     <th>Name</th>
-                    <th>Price</th>
+                    <th>Price (Rp)</th>
                 </tr>
             </thead>
             <tbody>
@@ -86,14 +86,14 @@
                     <tr>
                         <td><?= $no++ ?></td>
                         <td><?= $service->name ?></td>
-                        <td><?= $service->price ?></td>
+                        <td><?= number_format($service->price, 0, ',','.') ?></td>
                     </tr>
                 <?php endforeach ?>
             </tbody>
         </table>
 
         <div class="footer">
-            <p>Dicetak pada : <?= date('d-m-Y') ?></p>
+            <p>Printed at : <?= date('d-m-Y') ?></p>
         </div>
     </div>
     

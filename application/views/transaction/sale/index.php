@@ -24,6 +24,8 @@
         <div class="card">
           <div class="card-header">
             <button type="button" class="btn btn-success btn-add"><span class="btn-label"><i class="fa fa-plus"></i></span>Add Transaction</button>
+            <button type="button" class="btn btn-danger btn-pdf float-end"><span class="btn-label"><i class="fa fa-file-pdf"></i></span> Export PDF</button>
+            <button type="button" class="btn btn-secondary btn-excel float-end mt-2 mt-md-0 me-md-2"><span class="btn-label"><i class="fa fa-file-excel"></i></span> Export Excel</button>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -219,14 +221,36 @@
         {
           "data": null,
           "render": function(data, type, row) {
-            return `<div class="btn-group" role="group">
-            <button type="button" class="btn btn-icon btn-info btn-detail" data-id="${data.id}"><i class="fa fa-eye"></i></button> 
-            <button type="button" class="btn btn-icon btn-warning btn-edit" data-id="${data.id}"><i class="fa fa-pencil-alt"></i></button> 
-            <button type="button" class="btn btn-icon btn-danger btn-delete" data-id="${data.id}"><i class="fa fa-trash"></i></button>
+          
+
+            return `<div class="btn-group dropstart">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownAction" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownAction">
+                <button type="button" class="dropdown-item text-primary btn-pdf" data-id="${data.id}"><i class="fa fa-file-pdf"></i> Print</button> 
+                <button type="button" class="dropdown-item text-info btn-detail" data-id="${data.id}"><i class="fa fa-eye"></i> Detail</button> 
+                <button type="button" class="dropdown-item text-warning btn-edit" data-id="${data.id}"><i class="fa fa-pencil-alt"></i> Edit</button> 
+                <button type="button" class="dropdown-item text-danger btn-delete" data-id="${data.id}"><i class="fa fa-trash"></i> Delete</button>
+              </div>
             </div>`
           }
         },
       ]
+    })
+
+    $('body').on('click', '.btn-pdf', function() {
+      let id = $(this).attr('data-id')
+      let url = '<?php echo site_url('transaction/sale/pdf') ?>';
+  
+      if(id) {
+        url = '<?php echo site_url('transaction/sale/pdf/') ?>' + id
+      }
+  
+      window.open(url, '_blank')
+    })
+    
+    $('body').on('click', '.btn-excel', function() {
+      window.open('<?php echo site_url('transaction/sale/excel') ?>', '_blank')
     })
 
     $('#datatable-sale tbody').on('click', '.btn-detail', function() {

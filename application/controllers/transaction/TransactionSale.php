@@ -13,6 +13,8 @@ class TransactionSale extends CI_Controller
         $this->load->model('customer_model');
         $this->load->model('item_model');
         $this->load->library('form_validation');
+        $this->load->library('excel');
+        $this->load->library('pdf');
     }
     
     public function index()
@@ -26,6 +28,56 @@ class TransactionSale extends CI_Controller
         $this->load->view('transaction/sale/index', $data);
         $this->load->view('_layouts/main/main_end');
     }    
+
+    public function pdf($id = null)
+    {
+        if($id) {
+            $sales = $this->sales_model->get_sales_by_id($id);
+            $sales_detail = $this->sales_detail_model->get_sales_detail_where(['id_sale' => $id]);
+            $data = [
+                'title' => 'PDF | JD Bengkel',
+                'sales' => $sales,
+                'sales_detail' => $sales_detail
+            ];
+            
+            // Load tampilan sebagai HTML
+            $html = $this->load->view('transaction/sale/pdf-detail', $data, TRUE);
+            $filename = 'transaction.pdf';
+        } else {
+            $sales = $this->sales_model->get_all_sales();
+            $data = [
+                'title' => 'PDF | JD Bengkel',
+                'sales' => $sales,
+            ];
+            
+            // Load tampilan sebagai HTML
+            $html = $this->load->view('transaction/sale/pdf', $data, TRUE);
+            $filename = 'transactions.pdf';
+        }
+
+        $this->pdf->export($html, $filename);
+
+    }
+
+    public function excel($id = null)
+    {
+        $sales = $this->sales_model->get_all_sales();
+
+        $data = [];
+        foreach($sales as $sale) {
+            $data[] = [
+                $sale->customer_name,
+                $sale->sale_date,
+                $sale->sale_total,
+            ];
+        }
+
+        $headers = ["NO", "CUSTOMER", "DATE", "TOTAL (Rp)"];
+        $title = "DATA TRANSACTION SALES";
+        $filename = "transactions";
+
+        $this->excel->export($data, $title, $headers, $filename);
+    }
 
     // AJAX
     public function fetch_all()

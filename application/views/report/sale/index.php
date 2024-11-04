@@ -23,7 +23,7 @@
       <div class="col-md-12">
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
-                <form action="" id="formDate" class="d-flex">
+                <form action="" id="formDate" class="d-md-flex d-block">
                     <div class="form-group mx-2">
                         <label for="start_date">Start Date</label>
                         <input type="datetime-local" id="start_date" name="start_date" class="form-control"/>
@@ -34,6 +34,8 @@
                     </div>
                     <div class="form-group mx-2 d-flex align-items-end">
                         <button type="button" class="btn btn-primary btn-filter">Filter</button>
+                        <button type="button" class="btn btn-danger btn-pdf mx-2"><span class="btn-label"><i class="fa fa-file-pdf"></i></span> Export PDF</button>
+                        <button type="button" class="btn btn-secondary btn-excel"><span class="btn-label"><i class="fa fa-file-excel"></i></span> Export Excel</button>
                     </div>
                 </form>
             </div>
@@ -109,11 +111,21 @@
   var form;
 
   $(document).ready(function() {
+    const now = new Date()
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    now.setDate(now.getDate() - 1)
+    const yesterday = String(now.getDate()).padStart(2, '0')
+
+    const start_date = `${year}-${month}-${yesterday}T00:00`
+    const end_date = `${year}-${month}-${day}T00:00`
+
     table = $('#datatable').DataTable({
       "ajax": {
         "url": "<?php echo site_url('report/sale/fetch_data') ?>",
         "type": "POST",
-        "data": {start_date: null, end_date: null},
+        "data": {start_date, end_date},
         "dataType": "JSON",
       },
       "columns": [
@@ -125,8 +137,8 @@
     })
 
     $('.btn-filter').click(function() {
-        let startDate = $('#start_date').val()
-        let endDate = $('#end_date').val()
+        const startDate = $('#start_date').val() ? $('#start_date').val() : start_date 
+        const endDate = $('#end_date').val() ? $('#end_date').val() : end_date
 
         $('#datatable').DataTable().clear().destroy()
         $('#datatable').DataTable({
@@ -143,6 +155,14 @@
                 {"data": "sale_total"},
             ]
         })
+    })
+
+    $('.btn-pdf').click(function() {
+      window.open('<?php echo site_url('report/sale/pdf/') ?>' + start_date + '/' + end_date, '_blank')
+    })
+    
+    $('.btn-excel').click(function() {
+      window.open('<?php echo site_url('report/sale/excel/') ?>' + start_date + '/' + end_date, '_blank')
     })
   })
 </script>
