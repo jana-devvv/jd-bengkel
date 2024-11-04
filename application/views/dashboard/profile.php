@@ -131,7 +131,9 @@
                       <i class="fa fa-eye"></i>
                     </span>
                   </div>
-                  <small class="form-text text-muted"><?= $this->session->flashdata('error_old_password') ?></small>
+                  <?php if($this->session->flashdata('error_old_password')): ?>
+                    <small class="form-text text-muted"><?= $this->session->flashdata('error_old_password') ?></small>
+                  <?php endif ?>
                 </div>
                 <div class="form-group mb-3">
                   <label for="new_password" class="form-label">New Password</label>
@@ -165,19 +167,6 @@
 
 <script>
   $(document).ready(function() {
-    // $.ajax({
-    //   type: "POST",
-    //   url: "<?php echo site_url('profile/fetch_data') ?>",
-    //   dataType: "JSON",
-    //   success: function(response) {
-    //     $('#name').val(response.name)
-    //     $('#age').val(response.age)
-    //     $('#position').val(response.position)
-    //     $(`input[name=gender][value=${response.gender}]`).prop('checked', true)
-    //     $('#bio').val(response.bio)
-    //   }
-    // })
-
     $('#formProfile').submit(function(e) {
       e.preventDefault()
       var formData = $(this).serialize()
@@ -188,6 +177,13 @@
         data: formData,
         dataType: "JSON",
         success: function(response) {
+          swal({
+            title: "Success!",
+            text: "Profile saved successfully!",
+            icon: "success",
+            buttons: false,
+            timer: 800,
+          });
           $('#profile-name').text(response.name)
           $('#profile-age').text(response.age)
           $('#profile-position').text(response.position)
@@ -207,6 +203,13 @@
         data: formData,
         dataType: "JSON",
         success: function(response) {
+          swal({
+            title: "Success!",
+            text: "Credential updated successfully!",
+            icon: "success",
+            buttons: false,
+            timer: 800,
+          });
           $('#navbar-username').text(response.username)
           $('#profile-username').text(response.username)
           $('#profile-email').text(response.email)
@@ -224,10 +227,18 @@
         data: formData,
         dataType: "JSON",
         success: function(response) {
+          $('#formPassword .form-group').removeClass('has-error has-feedback');
           if(response.status == "error") {
             showErrors(response.errors)
           } else {
-            console.log('Yes')
+            $('#formPassword')[0].reset();
+            swal({
+              title: "Success!",
+              text: "Changed password successfully!",
+              icon: "success",
+              buttons: false,
+              timer: 800,
+            });
           }
         }
       })
